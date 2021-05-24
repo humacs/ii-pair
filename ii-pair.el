@@ -21,9 +21,9 @@
 
 ;; Our pairing environment moostly integrates these modules:
 
-(require 'iterm)
-(require 'osc52)
-(require 'ob-tmate)
+(load-file "iterm.el")
+(load-file "osc52.el")
+(load-file "ob-tmate.el")
 
 (provide 'ii-pair)
 ;;; ii-pair.el ends here
