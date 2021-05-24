@@ -583,7 +583,7 @@ Argument PATH: the location of the file."
                          "WORKS."
 		       "DOESN'T work.")))))
 
-(provide 'ob-tmate)
+(provide 'ii-ob-tmate)
 
 
 

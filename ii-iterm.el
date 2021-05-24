@@ -102,4 +102,4 @@ point (determined by `iterm-default-thing') instead."
   (let ((str (buffer-substring-no-properties beg end)))
     (iterm-send-string (concat "begin\n" str "\nend")))
   (forward-line 1))
-(provide 'iterm)
+(provide 'ii-iterm)
