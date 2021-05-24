@@ -171,7 +171,7 @@ Argument PARAMS the org parameters of the code block."
           (osc52-interprogram-cut-function (concat (ob-tmate--ssh-url ob-session) " # " (ob-tmate--web-url ob-session)))
           (if (y-or-n-p "Open browser for url?")
               (browse-url (ob-tmate--web-url ob-session))))))
-      (message "OB-TMATE: Checking for window: %S" window-alive)
+      (message "OB-TMATE: Checking for window %S: %S" window window-alive)
       (unless window-alive
           (message "OB-TMATE: create-window")
         (ob-tmate--create-window ob-session dir))
@@ -442,13 +442,21 @@ Argument OB-SESSION: the current ob-tmate session."
 
 Argument OB-SESSION: the current ob-tmate session."
   (unless (ob-tmate--window-alive-p ob-session)
-    (message "tmate execute session")
-    (ob-tmate--execute ob-session
-     ;; "-S" (ob-tmate--socket ob-session)
-     "new-window"
-     "-c" (expand-file-name session-dir)
-     ;; "-c" (expand-file-name "~") ;; start in home directory
-     "-n" (ob-tmate--window-default ob-session))))
+    (message "OB_TMATE: create-window as the window is not alive yet")
+    (let* ((window-default (ob-tmate--window-default ob-session))
+           (window-before-dot (car (split-string window-default "\\.")))
+           )
+      (message "OB_TMATE: window-default: %S window-before-dot: %S" window-default window-before-dot)
+      (ob-tmate--execute ob-session
+                         ;; "-S" (ob-tmate--socket ob-session)
+                         "new-window"
+                         "-c" (expand-file-name session-dir)
+                         ;; "-c" (expand-file-name "~") ;; start in home directory
+                         ;; We grab everything before the first '.' so .right and .left work
+                         "-n" window-before-dot)
+      ))
+  ;;"-n" (ob-tmate--window-default ob-session))))
+  )
 
 (defun ob-tmate--set-window-option (ob-session option value)
   "If window exists, set OPTION for window.
@@ -459,7 +467,7 @@ Argument OB-SESSION: the current ob-tmate session."
     ;; "-S" (ob-tmate--socket ob-session)
     "new-window"
      "set-window-option"
-     "-t" (ob-tmate--window-default ob-session)
+     "-t" (car (split-string (ob-tmate--window-default ob-session) "."))
      option value)))
 
 (defun ob-tmate--disable-renaming (ob-session)
@@ -541,15 +549,22 @@ Argument OB-SESSION: the current ob-tmate session."
 
 If no window is specified in OB-SESSION, returns 't."
   (let* (
-         (window (ob-tmate--window-default ob-session))
-	       (target (ob-tmate--target ob-session))
+         (window
+          (ob-tmate--window-default ob-session))
+         (dotless-window
+          (car (split-string window "\\.")))
+          (target (ob-tmate--target ob-session))
          ;; This appears to hang if we let it run early
 	       (output (ob-tmate--execute-string ob-session
 		                                       "list-windows"
 		                                       "-F '#W'"
-                                           )))
+                                           ))
+         )
     ;; (y-or-n-p (concat "Is {" target "} alive?"))
-    (string-match-p (concat window "\n") output)))
+    (message "OB_TMATE: window-alive-p window:%S dotless:%S target:%S" window dotless-window target)
+    (message "OB_TMATE: window-alive-p list-window output: %S" output)
+    (string-match-p (concat dotless-window "\n") output)
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test functions
