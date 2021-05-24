@@ -41,8 +41,8 @@
 ;;; Code:
 (require 'ob)
 (require 'seq)
-(require 'osc52e)
-(require 'iterm)
+(require 'ii-osc52)
+(require 'ii-iterm)
 (require 's)
 
 (defcustom org-babel-tmate-location "tmate"
