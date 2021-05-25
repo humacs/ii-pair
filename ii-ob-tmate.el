@@ -548,6 +548,7 @@ Argument OB-SESSION: the current ob-tmate session."
   "Check if WINDOW exists in tmate session.
 
 If no window is specified in OB-SESSION, returns 't."
+  (message "OB+TMATE: window-alive-p!!!")
   (let* (
          (window
           (ob-tmate--window-default ob-session))
