@@ -131,11 +131,13 @@ hitting screen's max DCS length."
 		(dolist (env initial-environment)
                   (if (string-match "^TERM=" env) (return env)))
 		'fixedcase))
-	     "")))
+	     ""))
+        (tmux (dolist (env initial-environment)
+                  (if (string-match "^TMUX=" env) (return 't)))))
 
     (setq osc52-cut-function
           ;; If `TERM' contains "tmux", they should use tmux.
-          (if (string-match "tmux" term)
+          (if tmux
               'osc52-select-text-tmux
 
             ;; Otherwise, if the `TERM' starts from "screen",
