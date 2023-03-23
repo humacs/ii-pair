@@ -123,17 +123,8 @@ hitting screen's max DCS length."
   ;; Look `initial-environment' instead of `(getenv "TERM")',
   ;; because emacs might set it to "dumb" internally.
   ;; `inital-environment' has the pure value when it started.
-  (let ((term
-	 ;; Make term == "" instead of nil, when no TERM environment variable
-	 (or (ignore-errors
-	       (replace-regexp-in-string
-		"^TERM=" ""
-		(dolist (env initial-environment)
-                  (if (string-match "^TERM=" env) (return env)))
-		'fixedcase))
-	     ""))
-        (tmux (dolist (env initial-environment)
-                  (if (string-match "^TMUX=" env) (return 't)))))
+  (let ((term (or (getenv-internal "TERM" initial-environment) (getenv "TERM") ""))
+        (tmux (or (getenv-internal "TMUX" initial-environment) (getenv "TMUX") "")))
 
     (setq osc52-cut-function
           ;; If `TERM' contains "tmux", they should use tmux.
